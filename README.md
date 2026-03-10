@@ -1,105 +1,69 @@
-# Operacijski-sustavi-TVZ
+# Operacijski sustavi — Laboratorijske vježbe
 
-**Labos 1** — Generiranje i ispis slučajnih vrijednosti
-Datoteka: prviProgram.c
+Repozitorij sadrži laboratorijske zadatke iz kolegija **Operacijski sustavi**, implementirane u programskom jeziku **C**.
+Vježbe pokrivaju osnovne koncepte rada s **procesima, dretvama i sinkronizacijom**.
 
-Program alocira globalno polje od 100000 elemenata tipa char.
-Svakom elementu dodjeljuje vrijednost -1 ili 1, generiranu pomoću rand().
-Ispisuje sve vrijednosti na ekran.
-Program spava 50 sekundi (sleep(50)) kako bi se mogao analizirati u sustavu (npr. kroz top).
+---
 
-**Cilj labosa:** uvod u memoriju procesa, globalne varijable i osnovnu interakciju sa sustavom.
+## Pregled labosa
 
-**Labos 2** — Osnovno stvaranje child procesa
-Datoteka: drugiProgram.c
+### Labos 1 — Generiranje slučajnih vrijednosti
 
-Program prima argument: broj child procesa koje treba stvoriti.
-U petlji poziva fork() i stvara N child procesa.
-Svako dijete ispisuje svoj redni broj, a roditelj također ispisuje poruku.
-Nakon stvaranja svih procesa, roditelj poziva wait() za svako dijete.
+**Datoteka:** `prviProgram.c`
+Program koristi globalno polje od **100000 `char` elemenata** kojima dodjeljuje vrijednosti **-1 ili 1** pomoću `rand()`.
+Vrijednosti se ispisuju na ekran, a program se zadržava aktivnim (`sleep(50)`) radi analize procesa.
 
-**Cilj labosa**: razumjeti fork(), parent-child odnose i sinkronizaciju pomoću wait().
-Napomena: program ne ograničava broj aktivnih procesa, pa pri velikim vrijednostima može preopteretiti sustav.
+**Tema:** memorija procesa, globalne varijable
 
-**Labos 3** — Poboljšano upravljanje procesima
-Datoteka: drugiProgramFix.c
+---
 
-Poboljšana verzija Labosa 2 koja uvodi ograničenje:
-Cmaksimalno_aktivnih = 10000;Prikaži više redaka
+### Labos 2 — Stvaranje child procesa
 
-Ako je dostignut maksimalan broj aktivnih procesa, program čeka (wait()) da se jedan završi.
-Time se kontrolira paralelizam i sprječava da sustav ostane bez resursa.
+**Datoteka:** `drugiProgram.c`
+Program prima argument koji predstavlja broj child procesa.
+U petlji koristi `fork()` za stvaranje procesa, a roditelj nakon toga poziva `wait()` za sinkronizaciju.
 
-Cilj labosa: primjena kontrole nad brojem aktivnih procesa + stabilniji dizajn.
+**Tema:** `fork()`, parent–child odnos, sinkronizacija procesa
 
-**Labos 4** — Očekivana analiza procesa i optimizacija
-(Program nije priložen, ali iz konteksta slijedi.)
+---
 
-Tipično uključuje mjerenje vremena izvršavanja, ponašanje procesa pod opterećenjem,
-i razumijevanje granica OS-a.
-Očekuje se nadogradnja znanja iz Labosa 2 i 3.
+### Labos 3 — Kontrola broja procesa
 
+**Datoteka:** `drugiProgramFix.c`
+Poboljšana verzija Labosa 2 koja uvodi ograničenje maksimalnog broja aktivnih procesa kako bi se spriječilo preopterećenje sustava.
 
-**Labos 5** — 
-**Zadatak 1** — Rezervacija sjedala (100 dretvi)
-Datoteka: Zadatak1.c [unicath-my...epoint.com]
-Opis
+**Tema:** upravljanje procesima, kontrola paralelizma
 
-Kreira se 100 dretvi, svaka predstavlja jednog putnika.
-Postoji globalno polje sjedala mjesta[100].
-Svaka dretva:
+---
 
-“kasni” nasumično vrijeme,
-pokušava preuzeti slučajno sjedalo,
-zaključava pristup (pthread_mutex_lock) kako bi izbjegla utrku (“race condition”),
-zauzima mjesto ako je slobodno.
+### Labos 4 — Analiza performansi procesa
 
+Labos uključuje analizu ponašanja procesa pod opterećenjem te mjerenje vremena izvršavanja.
 
+**Tema:** performanse i ograničenja operacijskog sustava
 
-**Važne točke:**
+---
 
-Simulira problem kritične sekcije.
-Korištenje globalnog mutexa garantira konzistentnost.
-Na kraju se ispisuje broj zauzetih i slobodnih mjesta te ukupno trajanje simulacije.
+### Labos 5 — Višedretveni programi
 
-**Tema:**dretve, kritične sekcije, sinkronizacija, mutexi, simulacija resursa.
+**Zadatak 1 — Rezervacija sjedala (`Zadatak1.c`)**
+Simulacija rezervacije sjedala s **100 dretvi** gdje svaka dretva pokušava zauzeti slučajno sjedalo uz zaštitu kritične sekcije pomoću `pthread_mutex`.
 
-**Zadatak 2** — Simulacija kućanstva i kuharice
-Datoteka: Zadatak2.c [unicath-my...epoint.com]
-Opis
-U ovoj simulaciji sudjeluje pet dretvi:
-👨‍💻 Davor
-🎾 Ivica
-🎹 Ivan
-😴 Tin
-👩‍🍳 Kuharica
-Sve dretve dijele jedan kritični resurs: stol, na koji kuharica stavlja obroke, a ostali ih uzimaju.
-Ključni elementi:
+**Zadatak 2 — Kuharica i studenti (`Zadatak2.c`)**
+Simulacija sustava proizvođač–potrošač gdje kuharica priprema obroke, a studenti ih uzimaju sa zajedničkog stola.
 
-Globalna varijabla stol tipa obrok_t.
-Mutex za zaštitu pristupa stolu.
-Svaki “student” ima svoje preferencije što jede, a što odbija.
-Svaki student radi ciklus aktivnosti:
+**Tema:** dretve, mutexi, sinkronizacija, kritične sekcije
 
-spavanje,
-programiranje,
-dolazak do stola,
-konzumiranje, preskakanje ili pronalazak praznog stola,
-neki imaju dodatne radnje (npr. Tin i kvarovi).
+---
 
+## Kompajliranje
 
-Kuharica kontinuirano priprema obroke dok broj_obroka > 0.
-Nakon završetka, glavna dretva prikazuje statistiku:
+```bash
+gcc program.c -o program -pthread
+```
 
-broj konzumiranih obroka
-broj odbijenih
-broj puta kada je stol bio prazan.
+## Pokretanje
 
-**Što se ovime vježba:**
-
-Napredna sinkronizacija u sustavima s više dretvi.
-Komunikacija proizvođač–potrošači (kuharica → studenti).
-Korištenje mutexa, povratnih vrijednosti dretvi i strukturiranih podataka.
-Složeno ponašanje simuliranih agenata.
-
-**Tema:** višedretvena komunikacija, sinkronizacija, simulacija, mutexi, koordinacija dretvi.
+```bash
+./program
+```
